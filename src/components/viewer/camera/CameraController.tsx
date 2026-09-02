@@ -8,6 +8,7 @@ import { useResponsiveCamera } from '@/hooks/useResponsiveCamera'
 import { useSceneStore } from '@/store/useSceneStore'
 import { CAMERA } from '@/lib/constants'
 import { CAMERA_PRESETS } from './cameraPresets'
+import type { CameraPresetDef } from '@/types/scene.types'
 
 const easeInOutCubic = (t: number): number =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
@@ -36,9 +37,13 @@ function CameraControllerImpl() {
 
   // Re-aim whenever the preset changes (and once on mount, which snaps rather than lerps).
   useEffect(() => {
-    const preset = CAMERA_PRESETS[activePreset]
-    const target = new THREE.Vector3(...preset.target)
-    scratch.offset.set(...preset.position).sub(target)
+    // Indexed rather than spread: `preset` is a union of six tuple types and
+    // TS will not spread a union into fixed parameters.
+    const preset: CameraPresetDef = CAMERA_PRESETS[activePreset]
+    const target = new THREE.Vector3(preset.target[0], preset.target[1], preset.target[2])
+    scratch.offset
+      .set(preset.position[0], preset.position[1], preset.position[2])
+      .sub(target)
     scratch.spherical.setFromVector3(scratch.offset)
 
     const radius = THREE.MathUtils.clamp(
