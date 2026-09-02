@@ -1,9 +1,9 @@
 'use client'
 
-import React from 'react'
-import { Html } from '@react-three/drei'
+import React, { useMemo } from 'react'
 import { box, cylinder, torus } from '@/lib/geometry'
-import { basketStraw, matooke, signFace, woodDark, woodMid } from '@/lib/materials'
+import { labelTexture } from '@/lib/labelTexture'
+import { basketStraw, matooke, woodDark, woodMid } from '@/lib/materials'
 
 /**
  * Matooke = short, stubby, GREEN cooking bananas (#7ab648) — not long yellow
@@ -71,7 +71,20 @@ const MatookeBunch: React.FC<MatookeBunchProps> = ({ position, count, yaw }) => 
   )
 }
 
-const MatookeDisplayImpl: React.FC = () => (
+const MatookeDisplayImpl: React.FC = () => {
+  const placardMap = useMemo(
+    () =>
+      labelTexture('Fresh Matooke', {
+        width: 512,
+        height: 180,
+        background: '#f2f7e6',
+        color: '#1a5c2a',
+        fontSize: 96,
+      }),
+    [],
+  )
+
+  return (
   <group>
     <mesh geometry={box(0.8, 0.35, 0.5)} material={woodDark} position={[3.8, 0.17, 7.6]} castShadow receiveShadow />
     <mesh geometry={box(0.86, 0.04, 0.56)} material={woodMid} position={[3.8, 0.37, 7.6]} castShadow receiveShadow />
@@ -88,24 +101,9 @@ const MatookeDisplayImpl: React.FC = () => (
     {/* Placard on the low table. */}
     <group position={[3.8, 0, 7.44]}>
       <mesh geometry={cylinder(0.02, 0.02, 0.34, 8)} material={woodDark} position={[0, 0.56, 0]} />
-      <mesh geometry={box(0.6, 0.2, 0.03)} material={signFace} position={[0, 0.78, 0]} />
-      <Html transform occlude center position={[0, 0.78, 0.025]} scale={0.0024} zIndexRange={[8, 0]}>
-        <div
-          className="pointer-events-none select-none"
-          style={{
-            width: 240,
-            textAlign: 'center',
-            fontWeight: 800,
-            fontSize: 42,
-            lineHeight: 1,
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase',
-            color: '#1a5c2a',
-          }}
-        >
-          Fresh Matooke
-        </div>
-      </Html>
+      <mesh geometry={box(0.6, 0.2, 0.03)} position={[0, 0.78, 0]}>
+        <meshStandardMaterial map={placardMap} roughness={0.8} />
+      </mesh>
     </group>
 
     <pointLight
@@ -116,7 +114,8 @@ const MatookeDisplayImpl: React.FC = () => (
       castShadow={false}
     />
   </group>
-)
+  )
+}
 
 export const MatookeDisplay = React.memo(MatookeDisplayImpl)
 MatookeDisplay.displayName = 'MatookeDisplay'

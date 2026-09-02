@@ -8,10 +8,10 @@
     "files": []
   },
   "app\\page.tsx -> @/components/viewer/RestaurantViewer": {
-    "id": 1087,
+    "id": 460,
     "files": [
-      "static/chunks/716.c54327bc0cb29e0d.js",
-      "static/chunks/87.6b83c5db0b192808.js"
+      "static/chunks/942.143c198917a9612d.js",
+      "static/chunks/460.e59c8d71a91ac0d0.js"
     ]
   }
 }

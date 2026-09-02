@@ -53,6 +53,19 @@ const BarCounterImpl: React.FC = () => (
         />
       </group>
     ))}
+
+    {/* Back-bar accent lights. Object-owned like the candles and pendants, so
+        the bar is still readable once night mode kills the ambient. */}
+    {[-3, 0, 3].map((x) => (
+      <pointLight
+        key={`bar-glow-${x}`}
+        position={[x, 1.55, -7.15]}
+        color="#ffb055"
+        intensity={0.55}
+        distance={4.5}
+        castShadow={false}
+      />
+    ))}
   </group>
 )
 

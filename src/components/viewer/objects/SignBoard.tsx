@@ -1,19 +1,38 @@
 'use client'
 
-import React from 'react'
-import { Html } from '@react-three/drei'
+import React, { useMemo } from 'react'
 import { BRAND } from '@/lib/constants'
 import { box, cylinder } from '@/lib/geometry'
-import { greenSign, metalShiny, signFace, signGlowStrip } from '@/lib/materials'
+import { labelTexture } from '@/lib/labelTexture'
+import { greenSign, metalShiny, signGlowStrip } from '@/lib/materials'
 
 /** Angled exactly as sketched: group anchored at (4.5, 1.8, 5.5), yawed -PI * 0.18. */
 const SIGN_POSITION: [number, number, number] = [4.5, 1.8, 5.5]
 const SIGN_ROTATION_Y = -Math.PI * 0.18
 
-const SignBoardImpl: React.FC = () => (
+const SignBoardImpl: React.FC = () => {
+  // Branding is painted into the face texture rather than overlaid as DOM, so
+  // it catches the sign's own green wash and never drifts out of alignment.
+  const faceMap = useMemo(
+    () =>
+      labelTexture(BRAND.name, {
+        width: 1024,
+        height: 512,
+        background: '#ffffff',
+        color: '#1a6b2a',
+        // 3 wrapped lines + tagline must fit 512px: 3 * 112 * 1.15 + 81 = 467.
+        fontSize: 112,
+        subtitle: BRAND.tagline,
+      }),
+    [],
+  )
+
+  return (
   <group position={SIGN_POSITION} rotation={[0, SIGN_ROTATION_Y, 0]}>
     <mesh geometry={box(3.5, 1.8, 0.22)} material={greenSign} castShadow receiveShadow />
-    <mesh geometry={box(3.3, 1.6, 0.05)} material={signFace} position={[0, 0, 0.12]} />
+    <mesh geometry={box(3.3, 1.6, 0.05)} position={[0, 0, 0.12]}>
+      <meshStandardMaterial map={faceMap} roughness={0.6} />
+    </mesh>
     <mesh geometry={box(3.5, 0.12, 0.1)} material={signGlowStrip} position={[0, 0.96, 0.06]} />
 
     {/* Support pillars stand on the organic-zone floor (world y = 0 -> local y = -1.8). */}
@@ -42,29 +61,9 @@ const SignBoardImpl: React.FC = () => (
       castShadow={false}
     />
 
-    <Html transform occlude center position={[0, 0.02, 0.16]} scale={0.005} zIndexRange={[8, 0]}>
-      <div
-        className="pointer-events-none select-none"
-        style={{
-          width: 620,
-          textAlign: 'center',
-          fontWeight: 800,
-          fontSize: 78,
-          lineHeight: 1.05,
-          letterSpacing: '0.02em',
-          textTransform: 'uppercase',
-          color: '#ffffff',
-          // White per brand, but stroked deep green so it still reads on the white face.
-          textShadow: '0 6px 18px rgba(0,0,0,0.45)',
-          WebkitTextStroke: '4px #1a6b2a',
-          paintOrder: 'stroke fill',
-        }}
-      >
-        {BRAND.name}
-      </div>
-    </Html>
   </group>
-)
+  )
+}
 
 export const SignBoard = React.memo(SignBoardImpl)
 SignBoard.displayName = 'SignBoard'

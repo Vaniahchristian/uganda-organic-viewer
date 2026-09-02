@@ -9,13 +9,17 @@ export interface CutawayData {
   outward: [number, number, number]
 }
 
-/** Grazing-angle deadband, so a panel doesn't strobe as you orbit past it. */
-const HIDE_THRESHOLD = 0.25
+/** Metres past the panel's plane before it drops out — stops edge-on strobing. */
+const HIDE_MARGIN = 0.15
 
 /**
- * Dollhouse cutaway: any shell panel whose outward face is turned toward the
- * camera sits between the viewer and the room, so it is hidden. Walls facing
- * away stay put and keep the space feeling enclosed.
+ * Dollhouse cutaway: a shell panel is hidden when the camera is on its outward
+ * side, because then it sits between the viewer and the room. Walls the camera
+ * is inside of stay put and keep the space feeling enclosed.
+ *
+ * This is a side-of-plane test, not an angle test: at shallow angles (looking
+ * into the kitchen from just above the roofline) an angle test leaves the
+ * ceiling up and the shot renders blank.
  *
  * ponytail: a full-scene traverse per frame. Fine for ~200 objects; if the
  * scene grows, collect the tagged meshes once on mount instead.
@@ -32,9 +36,10 @@ function CutawayImpl() {
       const outward = (obj.userData as Partial<CutawayData>).outward
       if (!outward) return
       obj.getWorldPosition(v.world)
-      v.toCamera.copy(camera.position).sub(v.world).normalize()
+      // Signed distance from the panel's plane to the camera, along its normal.
+      v.toCamera.copy(camera.position).sub(v.world)
       v.normal.set(outward[0], outward[1], outward[2])
-      obj.visible = v.toCamera.dot(v.normal) < HIDE_THRESHOLD
+      obj.visible = v.toCamera.dot(v.normal) < HIDE_MARGIN
     })
   })
 
