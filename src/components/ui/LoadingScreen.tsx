@@ -4,20 +4,33 @@ import { useEffect, useState } from 'react'
 import { useProgress } from '@react-three/drei'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { BRAND } from '@/lib/constants'
+import { useSceneStore } from '@/store/useSceneStore'
 
 export default function LoadingScreen() {
   const { progress } = useProgress()
   const reduceMotion = useReducedMotion()
+  const isSceneReady = useSceneStore((s) => s.isSceneReady)
   const [visible, setVisible] = useState(true)
+  const [creeping, setCreeping] = useState(0)
 
-  const pct = Math.min(100, Math.max(0, Math.round(progress)))
+  // `useProgress` covers any future GLTF/texture work; the creep keeps the bar
+  // honest-looking for the procedural scene, which reports no progress at all.
+  const pct = isSceneReady
+    ? 100
+    : Math.min(95, Math.max(Math.round(progress), creeping))
 
   useEffect(() => {
-    if (pct < 100) return
+    if (isSceneReady) return
+    const id = window.setInterval(() => setCreeping((c) => Math.min(90, c + 9)), 90)
+    return () => window.clearInterval(id)
+  }, [isSceneReady])
+
+  useEffect(() => {
+    if (!isSceneReady) return
     // Hold at 100% for a beat so the bar visibly completes, then fade.
     const id = window.setTimeout(() => setVisible(false), reduceMotion ? 0 : 350)
     return () => window.clearTimeout(id)
-  }, [pct, reduceMotion])
+  }, [isSceneReady, reduceMotion])
 
   return (
     <AnimatePresence>

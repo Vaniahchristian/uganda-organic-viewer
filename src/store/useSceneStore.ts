@@ -3,6 +3,10 @@ import { PRESET_ZONE, type CameraPresetName } from '@/components/viewer/camera/c
 import type { LightingMode, Zone } from '@/types/scene.types'
 
 interface SceneStore {
+  /** Flipped by <Scene> once its first frame is rendered; dismisses the loader. */
+  isSceneReady: boolean
+  setSceneReady: (v: boolean) => void
+
   lightingMode: LightingMode
   setLightingMode: (mode: LightingMode) => void
 
@@ -20,6 +24,9 @@ interface SceneStore {
 }
 
 export const useSceneStore = create<SceneStore>((set, get) => ({
+  isSceneReady: false,
+  setSceneReady: (v) => set({ isSceneReady: v }),
+
   lightingMode: 'day',
   setLightingMode: (mode) => set({ lightingMode: mode }),
 

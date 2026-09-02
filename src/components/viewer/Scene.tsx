@@ -1,7 +1,8 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useRef } from 'react'
 import { Preload } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
 import CameraController from '@/components/viewer/camera/CameraController'
 import DayLighting from '@/components/viewer/lighting/DayLighting'
 import NightLighting from '@/components/viewer/lighting/NightLighting'
@@ -34,6 +35,24 @@ function DividingWall({ hideTop }: { hideTop: boolean }) {
   )
 }
 
+/**
+ * The scene is entirely procedural, so drei's `useProgress` has no assets to
+ * report on and never leaves 0%. Readiness is signalled from the first actually
+ * rendered frame instead.
+ */
+function ReadySignal() {
+  const setSceneReady = useSceneStore((s) => s.setSceneReady)
+  const frames = useRef(0)
+
+  useFrame(() => {
+    if (frames.current > 2) return
+    frames.current += 1
+    if (frames.current === 3) setSceneReady(true)
+  })
+
+  return null
+}
+
 function SceneImpl() {
   const lightingMode = useSceneStore((s) => s.lightingMode)
   const isFloorPlan = useSceneStore((s) => s.isFloorPlan)
@@ -57,6 +76,7 @@ function SceneImpl() {
       <OrganicFoodsZone />
 
       <Preload all />
+      <ReadySignal />
     </>
   )
 }
