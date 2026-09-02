@@ -3,25 +3,89 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand palette — mirrors BRAND/ROOM in src/lib/constants.ts */
+  --brand-green: #1a6b2a;
+  --brand-green-deep: #0f4419;
+  --brand-gold: #d4930a;
+  --brand-gold-soft: #f0b450;
+  --brand-sign: #00ee55;
+  --brand-wood: #5c3010;
+  --brand-wood-dark: #2e1a06;
+  --brand-kitchen: #ff4400;
+
+  /* Glassmorphism tokens — exact rgba values from the PRD */
+  --glass-bg: rgba(10, 8, 4, 0.75);
+  --glass-border: rgba(240, 180, 80, 0.3);
+  --glass-blur: blur(8px);
+  --glass-active-bg: rgba(240, 160, 50, 0.3);
+  --glass-active-border: rgba(240, 180, 80, 0.75);
+
+  /* Surfaces */
+  --background: #0a0806;
+  --foreground: #f5efe2;
+
+  /* Canvas area height on small screens (PRD: 420px under 768px) */
+  --canvas-mobile-height: 420px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
+  margin: 0;
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The 3D canvas owns all pointer gestures; stop the browser hijacking pinch/drag. */
+canvas {
+  display: block;
+  touch-action: none;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Shared glass surface for the HUD panels/pills. */
+  .glass-surface {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  /* Horizontal control row on mobile: scrolls instead of overflowing. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 }
