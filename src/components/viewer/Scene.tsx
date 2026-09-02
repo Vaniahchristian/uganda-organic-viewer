@@ -4,6 +4,7 @@ import { memo, useRef } from 'react'
 import { Preload } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import CameraController from '@/components/viewer/camera/CameraController'
+import Cutaway from '@/components/viewer/effects/Cutaway'
 import DayLighting from '@/components/viewer/lighting/DayLighting'
 import NightLighting from '@/components/viewer/lighting/NightLighting'
 import KitchenZone from '@/components/viewer/zones/KitchenZone'
@@ -16,9 +17,11 @@ import { useSceneStore } from '@/store/useSceneStore'
 const BACKGROUND = { day: '#c9b48a', night: '#05070d' } as const
 
 /** Wall separating the dining room from the kitchen / organic display. */
-function DividingWall({ hideTop }: { hideTop: boolean }) {
+function DividingWall() {
   return (
-    <group name="dividing-wall" visible={!hideTop}>
+    // Tagged as a single unit: the whole wall drops out when viewed from the
+    // restaurant side, which is what opens up the dining room in the hero shot.
+    <group name="dividing-wall" userData={{ outward: [0, 0, 1] }}>
       <mesh position={[0, 2.1, 1.5]} receiveShadow material={M.wallDivider}>
         <boxGeometry args={[16, 4.2, 0.18]} />
       </mesh>
@@ -55,7 +58,6 @@ function ReadySignal() {
 
 function SceneImpl() {
   const lightingMode = useSceneStore((s) => s.lightingMode)
-  const isFloorPlan = useSceneStore((s) => s.isFloorPlan)
   const isNight = lightingMode === 'night'
 
   return (
@@ -71,10 +73,11 @@ function SceneImpl() {
       <CameraController />
 
       <RestaurantZone />
-      <DividingWall hideTop={isFloorPlan} />
+      <DividingWall />
       <KitchenZone />
       <OrganicFoodsZone />
 
+      <Cutaway />
       <Preload all />
       <ReadySignal />
     </>

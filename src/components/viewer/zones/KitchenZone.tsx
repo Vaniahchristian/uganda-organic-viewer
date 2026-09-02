@@ -12,7 +12,6 @@ const UTENSIL_X = [-5.2, -4.8, -4.4, -4.0, -3.6, -3.2, -2.8, -2.4]
 /** Open kitchen: dual stoves, extraction hood, prep counter with a utensil rack. */
 function KitchenZoneImpl() {
   const setActiveZone = useSceneStore((s) => s.setActiveZone)
-  const isFloorPlan = useSceneStore((s) => s.isFloorPlan)
 
   const select = useCallback(
     (e: ThreeEvent<MouseEvent>) => {
@@ -28,13 +27,13 @@ function KitchenZoneImpl() {
       <mesh position={[-3.5, -0.09, 4.5]} receiveShadow material={M.floorKitchen} onClick={select}>
         <boxGeometry args={[9, 0.18, 8]} />
       </mesh>
-      <mesh position={[-3.5, 2.1, 8.5]} receiveShadow material={M.wallPlaster}>
+      <mesh position={[-3.5, 2.1, 8.5]} receiveShadow material={M.wallPlaster} userData={{ outward: [0, 0, 1] }}>
         <boxGeometry args={[9, 4.2, 0.18]} />
       </mesh>
-      <mesh position={[-8, 2.1, 4.5]} receiveShadow material={M.wallPlaster}>
+      <mesh position={[-8, 2.1, 4.5]} receiveShadow material={M.wallPlaster} userData={{ outward: [-1, 0, 0] }}>
         <boxGeometry args={[0.18, 4.2, 8]} />
       </mesh>
-      <mesh position={[-3.5, 4.28, 4.5]} visible={!isFloorPlan} material={M.ceiling}>
+      <mesh position={[-3.5, 4.28, 4.5]} material={M.ceiling} userData={{ outward: [0, 1, 0] }}>
         <boxGeometry args={[9, 0.15, 8]} />
       </mesh>
 

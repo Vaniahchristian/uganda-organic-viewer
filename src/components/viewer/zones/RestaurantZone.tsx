@@ -13,8 +13,6 @@ import { useSceneStore } from '@/store/useSceneStore'
 /** Dining room: shell, bar, corner speakers, six laid tables under pendant lamps. */
 function RestaurantZoneImpl() {
   const setActiveZone = useSceneStore((s) => s.setActiveZone)
-  // Top-down floor plan would otherwise stare at the underside of the ceiling.
-  const isFloorPlan = useSceneStore((s) => s.isFloorPlan)
 
   const select = useCallback(
     (e: ThreeEvent<MouseEvent>) => {
@@ -30,27 +28,27 @@ function RestaurantZoneImpl() {
       <mesh position={[0, -0.09, -3]} receiveShadow material={M.floorTile} onClick={select}>
         <boxGeometry args={[16, 0.18, 10]} />
       </mesh>
-      <mesh position={[0, 2.1, -8]} receiveShadow material={M.wallPlaster}>
+      <mesh position={[0, 2.1, -8]} receiveShadow material={M.wallPlaster} userData={{ outward: [0, 0, -1] }}>
         <boxGeometry args={[16, 4.2, 0.18]} />
       </mesh>
-      <mesh position={[-8, 2.1, -3]} receiveShadow material={M.wallPlaster}>
+      <mesh position={[-8, 2.1, -3]} receiveShadow material={M.wallPlaster} userData={{ outward: [-1, 0, 0] }}>
         <boxGeometry args={[0.18, 4.2, 10]} />
       </mesh>
-      <mesh position={[8, 2.1, -3]} receiveShadow material={M.wallPlaster}>
+      <mesh position={[8, 2.1, -3]} receiveShadow material={M.wallPlaster} userData={{ outward: [1, 0, 0] }}>
         <boxGeometry args={[0.18, 4.2, 10]} />
       </mesh>
-      <mesh position={[0, 4.28, -3]} visible={!isFloorPlan} material={M.ceiling}>
+      <mesh position={[0, 4.28, -3]} material={M.ceiling} userData={{ outward: [0, 1, 0] }}>
         <boxGeometry args={[16, 0.15, 10]} />
       </mesh>
 
       {/* Wainscot: 0.6 high accent strip, offset a hair off each wall so it reads as trim */}
-      <mesh position={[0, 0.3, -7.89]} material={M.wallAccent}>
+      <mesh position={[0, 0.3, -7.89]} material={M.wallAccent} userData={{ outward: [0, 0, -1] }}>
         <boxGeometry args={[16, 0.6, 0.05]} />
       </mesh>
-      <mesh position={[-7.89, 0.3, -3]} material={M.wallAccent}>
+      <mesh position={[-7.89, 0.3, -3]} material={M.wallAccent} userData={{ outward: [-1, 0, 0] }}>
         <boxGeometry args={[0.05, 0.6, 10]} />
       </mesh>
-      <mesh position={[7.89, 0.3, -3]} material={M.wallAccent}>
+      <mesh position={[7.89, 0.3, -3]} material={M.wallAccent} userData={{ outward: [1, 0, 0] }}>
         <boxGeometry args={[0.05, 0.6, 10]} />
       </mesh>
 
