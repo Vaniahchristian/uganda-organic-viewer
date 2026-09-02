@@ -1,0 +1,17 @@
+{
+  "..\\node_modules\\@react-three\\drei\\core\\VideoTexture.js -> hls.js": {
+    "id": null,
+    "files": []
+  },
+  "..\\node_modules\\@react-three\\drei\\web\\FaceLandmarker.js -> @mediapipe/tasks-vision": {
+    "id": null,
+    "files": []
+  },
+  "app\\page.tsx -> @/components/viewer/RestaurantViewer": {
+    "id": 1087,
+    "files": [
+      "static/chunks/716.c54327bc0cb29e0d.js",
+      "static/chunks/87.6b83c5db0b192808.js"
+    ]
+  }
+}
